@@ -1,4 +1,0 @@
-*.venv
-.venv/
-assembler/__pycache__/
-output/
