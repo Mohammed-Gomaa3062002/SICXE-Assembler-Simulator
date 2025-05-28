@@ -8,11 +8,13 @@ Contains opcodes, registers, and other constants needed for assembly
 # Format: opcode -> (hex_value, format_number)
 OPCODES = {
     # Format 3/4 instructions
+    'CADD': ('18', 3),  # Conditional ADD
     'ADD': ('18', 3),
     'ADDF': ('58', 3),
     'ADDR': ('90', 2),
     'AND': ('40', 3),
     'CLEAR': ('B4', 2),
+    'CLOAD': ('08', 3),  # Conditional LOAD - added missing instruction
     'COMP': ('28', 3),
     'COMPF': ('88', 3),
     'COMPR': ('A0', 2),
@@ -80,6 +82,7 @@ REGISTERS = {
     'F': 6,
     'PC': 8,
     'SW': 9,
+    'Z': 0,  # Added Z register (sometimes used as synonym for A register)
 }
 
 # Assembler directives

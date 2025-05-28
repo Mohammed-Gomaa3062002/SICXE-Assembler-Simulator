@@ -1,5 +1,6 @@
 """
 Utility functions for SIC/XE Assembler
+Enhanced to handle multi-operand instructions
 """
 import re
 import os
@@ -93,16 +94,54 @@ def parse_line(line):
     return label, opcode, operand
 
 def parse_operand(operand):
-    """Parse operand to determine addressing mode and value"""
+    """Parse operand to determine addressing mode and value - Enhanced for multi-operand instructions"""
     if not operand:
         return None, 'simple', False
+    
+    # Remove spaces for initial processing
+    operand_clean = operand.replace(' ', '')
+    
+    # Handle multi-operand instructions (like CADD X,LENGTH,N)
+    if ',' in operand_clean:
+        operands = [op.strip() for op in operand.split(',')]
+        
+        # For multi-operand instructions, we'll use the first operand as primary
+        # and handle the rest as special cases
+        primary_operand = operands[0]
+        
+        # Check for indexed addressing on primary operand
+        indexed = False
+        if len(operands) > 1 and operands[-1].upper() == 'X':
+            indexed = True
+            # Remove the X from operands list
+            operands = operands[:-1]
+            if len(operands) == 1:
+                primary_operand = operands[0]
+        
+        # For instructions like CADD X,LENGTH,N, treat as a special multi-operand format
+        # We'll return the first meaningful symbol/value
+        for op in operands:
+            op = op.strip()
+            if op and not op.upper() in REGISTERS:
+                # This is likely a symbol or value, use it as the target
+                return parse_single_operand(op, indexed)
+        
+        # If all operands are registers or empty, use the first one
+        return parse_single_operand(primary_operand, indexed)
+    
+    else:
+        return parse_single_operand(operand, False)
+
+def parse_single_operand(operand, indexed=False):
+    """Parse a single operand for addressing mode and value"""
+    if not operand:
+        return None, 'simple', indexed
     
     # Remove spaces
     operand = operand.replace(' ', '')
     
-    # Check for indexed addressing (,X)
-    indexed = False
-    if operand.upper().endswith(',X'):
+    # Check for indexed addressing (,X) if not already set
+    if not indexed and operand.upper().endswith(',X'):
         indexed = True
         operand = operand[:-2]
     

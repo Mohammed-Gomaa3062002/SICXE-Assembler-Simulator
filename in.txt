@@ -3,6 +3,7 @@
 3 LDB #LENGTH ;Load immediate value of LENGTH into B register
 4 BASE LENGTH ;Set base register for addressing
 5 CLOOP JSUB RDREC ;Call subroutine RDREC
+6 CADD X,LENGTH,N ;Custom instruction or invalid opcode
 7 +LDA #4096 ;Load immediate value 4096 into A register
 8 LENGTH WORD 5 ;Define constant LENGTH = 5
 9 RDREC RESB 4096 ;Reserve 4096 bytes for record buffer
@@ -11,6 +12,7 @@
 12 TIO ;Possibly I/O operation (not standard SIC/XE)
 13 TIXR S ;Increment index register X, compare with S
 14 VAR1 BYTE X'0123456' ;Define a byte constant in hex
+15 CLOAD S,BUFFER,Z ;Possibly pseudo instruction or custom syntax
 16 FIX ;Undefined operation (label or placeholder)
 17 LDA #3 ;Load immediate value 3 into A register
 18 END FIRST ;End program, executionÂ beginsÂ atÂ FIRST
